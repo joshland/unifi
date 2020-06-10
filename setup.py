@@ -7,17 +7,20 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='unifi-api',
-    version='1.0.4',
+    version='1.0.7',
     author='Felipe Barros',
     author_email='felipe.barros@gmail.com',
     description='API Ubiquity UniFi Controller',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/fgbs/unifi',
+    url='https://github.com/joshland/unifi',
     packages=setuptools.find_packages(),
     install_requires=[
         'requests',
-        'requests-toolbelt'
+        'requests-toolbelt',
+        'click',
+        'pyyaml',
+        'loguru',
     ],
     classifiers=[
         'Intended Audience :: Developers',

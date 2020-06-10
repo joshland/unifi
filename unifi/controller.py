@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import ssl
 import json
+from loguru import logger
 from requests import Session, Request
 from requests_toolbelt import SSLAdapter
 
@@ -18,6 +19,7 @@ from . import exceptions
 
 class Controller(object):
     def __init__(self, host='127.0.0.1', port=8443, version='v5'):
+        """ host: (str) ipaddress of hosts, port: (int) tcp port, version: (str) default: 'v5' """
         self.host = host
         self.port = port
         self.version = version
@@ -31,8 +33,11 @@ class Controller(object):
             self.port
         )
 
+        logger.debug(f'open & mount session to {self._baseurl}')
         self._session = Session()
+        logger.trace(f'mount session begins')
         self._session.mount(self._baseurl, SSLAdapter(ssl.PROTOCOL_SSLv23))
+        logger.trace(f'mount session complete')
         
 
     @property
@@ -41,6 +46,7 @@ class Controller(object):
     
     @username.setter
     def username(self, value):
+        logger.trace(f'set user: {value}')
         self._username = value
 
     @property
@@ -49,6 +55,7 @@ class Controller(object):
     
     @password.setter
     def password(self, value):
+        logger.trace(f'set password: {"*" * len (value)}')
         self._password = value
     
     @property
@@ -59,6 +66,7 @@ class Controller(object):
     
     @site.setter
     def site(self, value):
+        logger.trace(f'set site: {value}')
         self._site = value
 
     def _jsondec(self, data):
@@ -105,6 +113,7 @@ class Controller(object):
         
         try:
             self.logged_in = True
+            logger.trace(f'Connect to {self.host}')
             return self._request(
                 'login',
                 {
@@ -156,6 +165,7 @@ class Controller(object):
         if ap_mac is not None and self.version != 'v2':
             data['ap_mac'] = ap_mac.lower()
 
+        logger.trace(f'authorize_guest: {data}')
         return self._request(
             'cmd/stamgr',
             data
@@ -168,6 +178,7 @@ class Controller(object):
         mac: the guest MAC address
         """
 
+        logger.trace(f'unauthorize_guest: {mac}')
         return self._request(
             'cmd/stamgr',
             {
@@ -183,6 +194,7 @@ class Controller(object):
         mac: the guest MAC address
         """
 
+        logger.trace(f'kick client: {mac}')
         return self._request(
             'cmd/stamgr',
             {
@@ -198,6 +210,7 @@ class Controller(object):
         mac: the guest MAC address
         """
 
+        logger.trace(f'block_guest: {mac}')
         return self._request(
             'cmd/stamgr',
             {
@@ -213,6 +226,7 @@ class Controller(object):
         mac: the guest MAC address
         """
 
+        logger.trace(f'unblock: {mac}')
         return self._request(
             'cmd/stamgr',
             {
@@ -228,6 +242,7 @@ class Controller(object):
         macs: array of client MAC addresses
         """
 
+        logger.trace(f'forget client: {macs}')
         return self._request(
             'cmd/stamgr',
             {
